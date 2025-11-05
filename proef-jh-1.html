@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow">
+    <title>Resolution 808</title>
+    <!-- add Google Public Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --max-width:600px;
+            --bg:#ffffff;
+            --card:#ffffff;
+            --accent:#0b63ff;
+            --text:#111827;
+        }
+
+        /* reset-ish */
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+        margin:0;
+        font-family: 'Public Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        font-weight:400;
+        background:var(--bg);
+        color:var(--text);
+
+        /* normal flow so content starts at top and can scroll */
+        padding:20px 20px;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        }
+
+        /* container: 90% on small screens, max 600px on desktop */
+        .container{
+            width:90%;
+            max-width:var(--max-width);
+            background:var(--card);
+            padding:0px;
+            border-radius:12px;
+            margin:0 auto; /* center horizontally only */
+            text-align:left;
+        }
+
+        /* title type */
+        .title-type{
+            margin:20px 0 20px;
+            font-weight:400;
+            /* responsive header size */
+            font-size:clamp(1.6rem, 2.5vw, 1.0625rem);
+            line-height:1.2;
+            color:#374151;
+            text-align:center;
+            margin-right:5%;
+        }
+
+        /* header type */
+        .header-type{
+            margin:50px 0 20px;
+            font-weight:400;
+            /* responsive header size */
+            font-size:clamp(1.25rem, 2.5vw, 1.0625rem);
+            line-height:1.5;
+            color:#374151;
+            text-align:left;
+        }
+
+        /* body type */
+        .body-type{
+            margin:0 0 18px;
+            font-size:clamp(1rem, 2.5vw, 1.0625rem);
+            line-height:1.5;
+            color:#374151;
+        }
+
+        /* remove bullets and apply 25px left indent for list items that use .body-type */
+        ul.body-type{
+            list-style: none !important;
+            padding-left: 0 !important; /* override inline styles */
+        }
+        ul.body-type > li{
+            margin-left: 40px;
+        }
+
+        .img-inline{
+            width:100%;
+            margin-bottom:20px;
+        }
+
+        .cta{
+            display:inline-block;
+            padding:10px 16px;
+            background:#000;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:600;
+        }
+
+        .section{
+            margin-top:18px;
+        }
+
+        footer{
+            margin-top:50px;
+            padding-bottom:100px;
+            font-size:12px;
+        }
+
+        /* slightly larger padding on wide screens */
+        @media (min-width:900px){
+            .container{padding:40px}
+        }
+
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: contain;
+        }
+
+        .img-inline {
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-inline:hover {
+            opacity: 0.9;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create lightbox element
+            const lightbox = document.createElement('div');
+            lightbox.className = 'lightbox';
+            document.body.appendChild(lightbox);
+
+            // Add click event to all images
+            document.querySelectorAll('.img-inline').forEach(img => {
+                img.addEventListener('click', e => {
+                    const lightboxImg = document.createElement('img');
+                    lightboxImg.src = img.src;
+                    lightbox.innerHTML = '';
+                    lightbox.appendChild(lightboxImg);
+                    lightbox.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Close lightbox when clicking outside the image
+            lightbox.addEventListener('click', e => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Add touch gestures for zooming
+            let currentScale = 1;
+            let initialDistance = 0;
+
+            lightbox.addEventListener('touchstart', e => {
+                if (e.touches.length === 2) {
+                    initialDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                }
+            });
+
+            lightbox.addEventListener('touchmove', e => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    
+                    const scale = currentDistance / initialDistance;
+                    const newScale = Math.min(Math.max(currentScale * scale, 1), 3);
+                    
+                    const img = lightbox.querySelector('img');
+                    if (img) {
+                        img.style.transform = `translate(-50%, -50%) scale(${newScale})`;
+                    }
+                }
+            });
+
+            lightbox.addEventListener('touchend', () => {
+                const img = lightbox.querySelector('img');
+                if (img) {
+                    currentScale = parseFloat(img.style.transform.match(/scale\((.*?)\)/)?.[1] || 1);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <main class="container" role="main">
+        <p class="body-type" style="font-size:12px; margin-bottom:50px; text-align:center;">
+            Carel Fransen<br>
+            The Eriskay Connection<br>
+            Nov. 2025
+        </p>
+        <h1 class="title-type">
+            RESOLUTION 808
+        </h1>
+        <p class="title-type" style="margin-bottom:50px;">
+            Martino Lombezzi<br>
+            Jorie Horsthuis
+        </p>
+        <img class="img-inline" src="https://www.dropbox.com/scl/fi/yl2wf9he80iru4lg3sbno/JH_04.jpg?rlkey=mjh0xrs4rcwz9kfpg7pie7sld&dl=1" />
+        <p class="body-type">
+            The way I work as a designer is that I first focus on the development of the concept. I read and browse through the materials, and then I try to come up with some overlapping structure and design approach that can best bring everything together. Hereby I present you my first ideas and sketches. Below I'll explain my considerations, and you can download a PDF of the design sketch here:
+        </p>
+        <p class="body-type" style="text-align:center; margin-right:40px; margin-top:40px;">
+            <a class="cta" href="https://www.dropbox.com/scl/fi/c9j3ujoaemjex2hnfkigk/JH_Proef-1.pdf?rlkey=pv1lnbt7183hpke078swrro13&dl=1">Download PDF</a>
+        </p>
+
+        <section class="section" style="margin-top:40px;">
+            <h2 class="header-type">
+                Concept
+            </h2>
+            <p class="body-type">
+                For this book I initially considered to create a chronological structure for the book. I found it interesting how Jorie told me about the creation of the Tribunal, and how it really was an experiment for everybody involved. I wanted to emphasise this for the reader, to give them a similar experience in how they approach the book. As if the reader would (re)discover the Tribunal in a similar way.
+            </p>
+            <p class="body-type">
+                However, after looking at all the materials and reflecting on your proposed chronological structure (and your wish to not adhere to it strictly), I think it might work better to approach it a bit more loosely, and focus most on the subjects of the chapters and articles.
+            </p>
+            <p class="body-type">
+                I still think some kind of global chronology is very useful, but I think Jorie can benefit a lot from having the freedom to easily refer to different aspects of the history without having to worry too much about what part of the book the text is placed in.
+            </p>
+            <h2 class="header-type">
+                Structure
+            </h2>
+            <p class="body-type">
+                I envision a structure like this (sourced from your proposal):
+            </p>
+            <ul class="body-type" style="padding-left:1.25rem; margin-top:0">
+                <li>CHAPTER 1: HOW IT ALL BEGAN</li>
+                <li>Article 1.1: Substory about this subject</li>
+                <li>Article 1.2: Substory about this subject</li>
+                <li>Article 1.3: Substory about this subject</li>
+            </ul>
+            <ul class="body-type" style="padding-left:1.25rem; margin-top:0">
+                <li>CHAPTER 2: PIONEERING INTERNATIONAL CRIMINAL LAW</li>
+                <li>Article 2.1: Substory about this subject</li>
+                <li>Article 2.2: Substory about this subject</li>
+                <li>Article 2.3: Substory about this subject</li>
+                <li>Article 2.4: Substory about this subject</li>
+            </ul>
+            <ul class="body-type" style="padding-left:1.25rem; margin-top:0">
+                <li>CHAPTER 3: SREBRENICA</li>
+                <li>Article 3.1: Substory about this subject</li>
+                <li>Article 3.2: Substory about this subject</li>
+                <li>Article 3.3: Substory about this subject</li>
+            </ul>
+            <ul class="body-type" style="padding-left:1.25rem; margin-top:0">
+                <li>... and so forth</li>
+            </ul>
+            <p class="body-type">
+                With image sections between some or even every substory. Not literally linking every image section to a specific substory, but more generally through the whole book. But I can still see it work to work with black-and-white thumbnails within the texts, for example, if at some point Jorie does refer to very specific images.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/xxel5bglb0xhq7ccogjmq/JH_08.jpg?rlkey=yfsnerbh7cpn7f9gmo4yy6knv&dl=1" />
+            <p class="body-type">
+                I also think that captions play an important role in a book like this. Not all images need a textual caption, I'm sure, but I think many will benefit from a short or sometimes longer factual note. I do think it could be nice to caption image numbers on all images, to really refer to this aspect of the story how everything is always documented. And the numbers can then be used with the thumbnails in the texts.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/60v4ex461olypggzuy74q/JH_07.jpg?rlkey=2ma5osl6r4azropibyht0rdgg&dl=1" />
+            <p class="body-type">
+                I imagine using two different kinds of paper: a white paper for images and their captions, a coloured stock for the texts in between. I now picked a warm yellow paper, kind of relating to the backgrounds you used for the object photographs. This could make the binding (structure of signatures) a bit more complex, but it also allows us to cut quite some costs as the coloured text pages could all be printed in black only.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/w6bv0ooe8ixbz8nbemjzu/JH_15.jpg?rlkey=36fp4xjiqiezplcrqjzwv9bh7&dl=1" />
+            <h2 class="header-type">
+                Design
+            </h2>
+            <p class="body-type">
+                I opted to use the two types of images you have in two different ways: framed for the objects, full bleed for the landscapes, portraits, and other types of photographs for a more cinematic feel. These two types also work well together in combination on a spread.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/bb3axeaj6a7kq8s6yta20/JH_17.jpg?rlkey=urz99s4c9km3kefuf9saiewku&dl=1" />
+            <p class="body-type">
+                For the typography, I used a combination of a light and bold Univers by Linotype. It's a very classic business font that I think relates well to the bureaucratic nature of the subject, but well spaced and at a relatively large font size like this, it gives it a much more open and contemporary feel. I also imagine using some tricks like increasing the font size a bit on each first page of an article. And I played around with adding some graphic elements on the text pages that refer a bit to artifacts from scanned documents.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/aqk6qs3lc710g5dt20x4o/JH_18.jpg?rlkey=f7rdaew8p32p12dpnzp28shkp&dl=1" />
+            <p class="body-type">
+                For the captions, I let them overlap slightly with all the images. It's a graphic choice that immediately gives a recognisable look for the book, while it also emphasises that every image is documented and annotated in a way. Placement is still a tad rough, this is something I’ll refine for readability, of course. For now it’s just to give an idea for the feeling of the design. There’s still elements like page numbers missing too, for example.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/inqhy81y5x0exon16ywhz/JH_16.jpg?rlkey=nhtcump97jft1tnp4par5qxjn&dl=1" />
+            <p class="body-type">
+                In the PDF I sketched a couple of different kinds of spreads, in which you can see how I see this work graphically: with small or large images, in combination with shorter or longer (or no) captions, and so forth.
+            </p>
+            <p class="body-type">
+                The current size of the book is 17×23 cm.
+            </p>
+            <h2 class="header-type">
+                Cover
+            </h2>
+            <p class="body-type">
+                For the cover I tried a number of different things, but here I show you three of the directions that worked well so far for me.
+            </p>
+            <p class="body-type">
+                All three directions use the same kind of yellow paper as used in the rest of the book for the texts (but thicker). And all emphasise a specific aspect of the story. The first one on the story of the painted helmets (on the front and back cover). The other two more on a visualisation of the endless documentation, and for the last one also on the actual resolution document itself.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/pt03wpcjnldrslua8uh7q/7.jpg?rlkey=58924jsv06ji3qbe0czbulgou&dl=1" />
+            <p class="body-type">
+                All three directions use the same kind of yellow paper as used in the rest of the book for the texts (but thicker). And all emphasise a specific aspect of the story. The first one on the story of the painted helmets (on the front and back cover). The other two more on a visualisation of the endless documentation, and for the last one also on the actual resolution document itself.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/3p8ogxjvnrypnmsjfzlfv/8.jpg?rlkey=1ndpxfeiqopztc7j46xgm7tbn&dl=1" />
+            <p class="body-type">
+                For the first two directions I also opted to add a subtitle. I quickly came up with "Documents from the International Criminal Tribunal for the Former Yugoslavia". I think it's important to add something like this so it becomes immediately clear for everyone what the book is about, especially those who are not aware of the meaning of "Resolution 808". The exact wording and nature of the subtitle can surely be improved, though. But I wanted to show you my thought process.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/2jr27taropvy44dhxbprq/9.jpg?rlkey=7wtk39p0aktunql9k5wfqvsqt&dl=1" />
+            <p class="body-type">
+                I also opted to add some kind of text for the back of the book. I quickly used (part) of your introduction. It gives a good impression of what I envision, but again, the text itself still needs to be adjusted.
+            </p>
+            <h2 class="header-type">
+                Next steps
+            </h2>
+            <p class="body-type">
+                It will be much easier for me to continue working on the concept when I have some more concrete textual content to work with. All the articles from one or two chapters, for example. Because then I know more about the (average) length of these articles, whether there are footnotes/endnotes, if there are image thumbnails to be added (and how many). Then I can much better predict how that will affect the structure of the book as a whole, and how the image sections relate to these. But these initial sketches give you an idea of how I envision the book to work.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

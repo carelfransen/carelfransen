@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow">
+    <title>Mengelwerk</title>
+    <!-- add Google Public Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --max-width:600px;
+            --bg:#ffffff;
+            --card:#ffffff;
+            --accent:#0b63ff;
+            --text:#111827;
+        }
+
+        /* reset-ish */
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+        margin:0;
+        font-family: 'Public Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        font-weight:400;
+        background:var(--bg);
+        color:var(--text);
+
+        /* normal flow so content starts at top and can scroll */
+        padding:20px 20px;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        }
+
+        /* container: 90% on small screens, max 600px on desktop */
+        .container{
+            width:90%;
+            max-width:var(--max-width);
+            background:var(--card);
+            padding:0px;
+            border-radius:12px;
+            margin:0 auto; /* center horizontally only */
+            text-align:left;
+        }
+
+        /* title type */
+        .title-type{
+            margin:20px 0 20px;
+            font-weight:400;
+            /* responsive header size */
+            font-size:clamp(1.6rem, 2.5vw, 1.0625rem);
+            line-height:1.2;
+            color:#374151;
+            text-align:center;
+            margin-right:5%;
+        }
+
+        /* header type */
+        .header-type{
+            margin:50px 0 20px;
+            font-weight:400;
+            /* responsive header size */
+            font-size:clamp(1.25rem, 2.5vw, 1.0625rem);
+            line-height:1.5;
+            color:#374151;
+            text-align:left;
+        }
+
+        /* body type */
+        .body-type{
+            margin:0 0 18px;
+            font-size:clamp(1rem, 2.5vw, 1.0625rem);
+            line-height:1.5;
+            color:#374151;
+        }
+
+        /* remove bullets and apply 25px left indent for list items that use .body-type */
+        ul.body-type{
+            list-style: none !important;
+            padding-left: 0 !important; /* override inline styles */
+        }
+        ul.body-type > li{
+            margin-left: 40px;
+        }
+
+        .img-inline{
+            width:100%;
+            margin-bottom:20px;
+        }
+
+        .cta{
+            display:inline-block;
+            padding:10px 16px;
+            background:#000;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:600;
+        }
+
+        .section{
+            margin-top:18px;
+        }
+
+        footer{
+            margin-top:50px;
+            padding-bottom:100px;
+            font-size:12px;
+        }
+
+        /* slightly larger padding on wide screens */
+        @media (min-width:900px){
+            .container{padding:40px}
+        }
+
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: contain;
+        }
+
+        .img-inline {
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-inline:hover {
+            opacity: 0.9;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create lightbox element
+            const lightbox = document.createElement('div');
+            lightbox.className = 'lightbox';
+            document.body.appendChild(lightbox);
+
+            // Add click event to all images
+            document.querySelectorAll('.img-inline').forEach(img => {
+                img.addEventListener('click', e => {
+                    const lightboxImg = document.createElement('img');
+                    lightboxImg.src = img.src;
+                    lightbox.innerHTML = '';
+                    lightbox.appendChild(lightboxImg);
+                    lightbox.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Close lightbox when clicking outside the image
+            lightbox.addEventListener('click', e => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Add touch gestures for zooming
+            let currentScale = 1;
+            let initialDistance = 0;
+
+            lightbox.addEventListener('touchstart', e => {
+                if (e.touches.length === 2) {
+                    initialDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                }
+            });
+
+            lightbox.addEventListener('touchmove', e => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    
+                    const scale = currentDistance / initialDistance;
+                    const newScale = Math.min(Math.max(currentScale * scale, 1), 3);
+                    
+                    const img = lightbox.querySelector('img');
+                    if (img) {
+                        img.style.transform = `translate(-50%, -50%) scale(${newScale})`;
+                    }
+                }
+            });
+
+            lightbox.addEventListener('touchend', () => {
+                const img = lightbox.querySelector('img');
+                if (img) {
+                    currentScale = parseFloat(img.style.transform.match(/scale\((.*?)\)/)?.[1] || 1);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <main class="container" role="main">
+        <p class="body-type" style="font-size:12px; margin-bottom:50px; text-align:center;">
+            Carel Fransen<br>
+            The Eriskay Connection<br>
+            Nov. 2025
+        </p>
+        <h1 class="title-type">
+            MENGELWERK
+        </h1>
+        <p class="title-type" style="margin-bottom:50px;">
+            Marjolein Blom
+        </p>
+        <img class="img-inline" src="https://www.dropbox.com/scl/fi/ui0llb7x9vwcuqhcn6vji/MAB_01.jpg?rlkey=49zvqwrrrrngsl1ls8j90b69c&dl=1" />
+        <p class="body-type">
+            Hierbij stuur ik je een eerste opzet van een aantal spreads die ik heb gemaakt met de aangeleverde materialen. Hierbij ook een link naar de PDF met een ruimere selectie van spreads.
+        </p>
+        <p class="body-type" style="text-align:center; margin-right:40px; margin-top:40px;">
+            <a class="cta" href="https://www.dropbox.com/scl/fi/2tz1v6nmkcb38uyghillz/MAB_Proef-1.pdf?rlkey=46elpr0v0zjrg9smhvg0w9n5m&dl=1">Download PDF</a>
+        </p>
+
+        <section class="section" style="margin-top:40px;">
+            <h2 class="header-type">
+                Combinaties
+            </h2>
+            <p class="body-type">
+                Na een dertigtal spreads te hebben samengesteld, heb ik ze langs jouw voorgestelde belangrijke combinaties gelegd, en gekeken hoe die zich tot elkaar verhouden. Jouw suggesties die ik goed vond werken heb ik toegevoegd, de spreads die ik beter vond werken dan combinaties van mijzelf heb ik aangepast, en een enkele spread heb ik zo gelaten, omdat ik enkele beelden beter vond werken in combinatie met een ander beeld.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/xtu23qekch1tdvwfnuqvk/MAB_06.jpg?rlkey=xg5ib7pqzsx72965uke50w3fa&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/klhq1wkvq3g6gyov0fht9/MAB_28.jpg?rlkey=44ob6ebwf51q7j53evsgzdhea&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/52hajko0d9y467rpvtthy/MAB_04.jpg?rlkey=htpdjg5yrwabt1nu0oi1w7fsy&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/ytaanb9flqkd2kqmcgdjn/MAB_37.jpg?rlkey=a7dg6a1fh6izzo3u181jb941k&dl=1" />
+            <h2 class="header-type">
+                Ontwerp
+            </h2>
+            <p class="body-type">
+                Zoals we al eerder besproken hebben zie ik een sympathiek, klein boekje voor me (ik heb nu 115 × 160 mm als formaat aangehouden). Qua papier zou ik graag een super opdikkend, ruw, ongestreken materiaal gebruiken. Iets heel tactiels, off-white, misschien zelfs een beetje gelig.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/btkaimcyfa4allfof3ahh/MAB_18.jpg?rlkey=u1szs6quqg8wy305rzq933hac&dl=1" />
+            <p class="body-type">
+                Qua teksten (citaten) moeten we nog even zoeken naar wat goed zou kunnen werken. Ik heb nu gespeeld met het idee om gewoon scans van de betreffende pagina's te gebruiken, en in zwart te drukken op een gekleurd papier (ik heb nu voor oranje gekozen). Op die manier trek je helemaal los van de rest van het boek. Maar de manier waarop we dit aanpakken hangt uiteindelijk ook veel af van de selectie citaten die we kunnen vinden. Ik heb al wel een kleine leeslijst aangelegd van boeken waar mogelijk mooie citaten in te vinden zijn die betrekking hebben op de schoonheid van het boek, de bibliotheek, en de toevalligheid van het vinden.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/jbszfkdbkoezt5q7i58ng/MAB_10.jpg?rlkey=upg0q047btwo4zb2dyyreznot&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/ep8kx3unrn0p6wj1x2skg/MAB_11.jpg?rlkey=zvhancpq56x8ddmr67tlmknio&dl=1" />
+            <p class="body-type">
+                Ik heb nog wat gespeeld met wat ontwerpelementen. Zo variëer ik soms met de formaten van de beelden (waardoor hier en daar paginacijfers te voorschijn komen). Hiervoor heb ik nu even Romeinse cijfers gebruikt. Ik weet nog niet of ik dat zo wil houden. Maar dat beelden soms iets anders qua verhouding zijn levert wel wat extra dynamiek op.
+            </p>
+            <h2 class="header-type">
+                Omslag
+            </h2>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/e27y534yppr976phb36aj/MAB1_Total.jpg?rlkey=ddmy76lfp6avam1z5jau1hwp2&dl=1" />
+            <p class="body-type">
+                Ik heb sterk het gevoel dat het boek mag voelen als een los binnenwerk, zonder omslag. Dus ik stel voor om dat ook zo te produceren. Een beetje vergelijkbaar met ’Om (Mother), maar dan zonder stofomslag. Het omslag bestaat dan als het ware uit de eerste en laatste pagina's van het binnenwerk. Met een 'naakte' rug waar je het naaigaren nog kunt zien zitten. Idealiter met een gaas eroverheen geplakt zoals in deze schets.
+            </p>
+            <p class="body-type">
+                Ik vind het "Mengelwerk" beeld nog steeds enorm goed werken als omslag. En ook als titel. Het spreekt echt tot mijn verbeelding. Ik heb ook een mooie 'achterkant' van het omslag gevonden. :-) En verder qua typografie alles zoveel mogelijk eenvoudig gelaten.
+            </p>
+            <h2 class="header-type">
+                De volgende stappen
+            </h2>
+            <p class="body-type">
+                Ik wil sowieso eens wat rond gaan neuzen in de boeken op mijn leeslijst, om te kijken of het haalbaar is hier een aantal mooie citaten uit te halen. En dan reflecteren op hoe deze inhoudelijk in het boek verwerkt kunnen worden (en of dit ook iets is wat je toe wil voegen aan het boek). Daarbij kan ik ook een productieofferte aanvragen op basis van deze opzet, om een indruk te kunnen krijgen van wat het boek zou gaan kosten om te maken. Ten slotte wil ik me nog veel meer gaan richten op het vinden van mooie beeldcombinaties met jouw aangeleverde materiaal. Maar daarmee ga ik pas na mijn herstel van de operatie mee aan de slag.
+            </p>
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/kl3iqd6b1dxhu30bap8ek/MAB_39.jpg?rlkey=eoxeh3czpkynao5dkyn5rxwqj&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/a6kiexdc5rmvdy99p2eqs/MAB_40.jpg?rlkey=586mgsq5l54g4vwnzl98dkjer&dl=1" />
+            <img class="img-inline" src="https://www.dropbox.com/scl/fi/6r5fo8yg5mrqv5rqj1hze/MAB_41.jpg?rlkey=bka5tsarce3qoe0kf0x5n5ojt&dl=1" />
+        </section>
+    </main>
+</body>
+</html>
