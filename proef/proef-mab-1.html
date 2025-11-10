@@ -133,7 +133,8 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform-origin: 0 0;
+            transform: translate(-50%, -50%);
+            transform-origin: center;
             object-fit: contain;
             will-change: transform;
             touch-action: none;
@@ -188,8 +189,15 @@
             let startDistance = 0;
             let isPinching = false;
             let startPanPoint = { x: 0, y: 0 };
+            let isTouchMove = false;  // Track if touch moved
             const minScale = 1;
             const maxScale = 4;
+
+            function resetImageTransform(img) {
+                scale = 1;
+                translate = { x: 0, y: 0 };
+                img.style.transform = 'translate(-50%, -50%)';
+            }
 
             function getPoint(e) {
                 return { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
@@ -206,16 +214,22 @@
 
             function toLocal(point, img) {
                 const rect = img.getBoundingClientRect();
-                return { x: point.x - rect.left, y: point.y - rect.top };
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                return { x: point.x - centerX, y: point.y - centerY };
             }
 
             function applyTransform(img) {
-                img.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+                if (scale === 1) {
+                    img.style.transform = 'translate(-50%, -50%)';
+                } else {
+                    img.style.transform = `translate(-50%, -50%) translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+                }
             }
 
             // Touch event handlers
             lightbox.addEventListener('touchstart', e => {
-                e.preventDefault();
+                isTouchMove = false;
                 const touches = Array.from(e.touches);
                 touches.forEach(touch => {
                     pointers.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
@@ -241,6 +255,7 @@
             });
 
             lightbox.addEventListener('touchmove', e => {
+                isTouchMove = true;
                 e.preventDefault();
                 const touches = Array.from(e.touches);
                 touches.forEach(touch => {
@@ -251,13 +266,15 @@
                 if (!img) return;
 
                 if (touches.length === 1 && !isPinching) {
-                    // Pan
-                    const p = getPoint(e);
-                    const dx = p.x - startPanPoint.x;
-                    const dy = p.y - startPanPoint.y;
-                    translate.x = startTranslate.x + dx;
-                    translate.y = startTranslate.y + dy;
-                    applyTransform(img);
+                    // Pan only if scaled
+                    if (scale > 1) {
+                        const p = getPoint(e);
+                        const dx = p.x - startPanPoint.x;
+                        const dy = p.y - startPanPoint.y;
+                        translate.x = startTranslate.x + dx;
+                        translate.y = startTranslate.y + dy;
+                        applyTransform(img);
+                    }
                 } else if (touches.length >= 2) {
                     // Pinch
                     const pts = Array.from(pointers.values());
@@ -267,9 +284,13 @@
                     let newScale = startScale * (curDist / startDistance);
                     newScale = Math.min(Math.max(newScale, minScale), maxScale);
 
-                    // Keep pinch focal point stationary
-                    translate.x = startTranslate.x + startMid.x * (startScale - newScale);
-                    translate.y = startTranslate.y + startMid.y * (startScale - newScale);
+                    if (newScale > 1) {
+                        // Keep pinch focal point stationary
+                        translate.x = startTranslate.x + startMid.x * (startScale - newScale);
+                        translate.y = startTranslate.y + startMid.y * (startScale - newScale);
+                    } else {
+                        translate = { x: 0, y: 0 };
+                    }
 
                     scale = newScale;
                     applyTransform(img);
@@ -281,16 +302,24 @@
                     pointers.delete(touch.identifier);
                 });
 
+                const img = lightbox.querySelector('img');
+                
                 if (pointers.size < 2) {
                     isPinching = false;
                     startScale = scale;
                     startDistance = 0;
                     startTranslate = { ...translate };
+                    
+                    // If scale is 1 and no movement, treat as a tap
+                    if (scale === 1 && !isTouchMove && e.target === lightbox) {
+                        lightbox.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        if (img) resetImageTransform(img);
+                    }
                 } else if (pointers.size >= 2) {
                     const pts = Array.from(pointers.values());
                     startDistance = distance(pts[0], pts[1]);
                     startScale = scale;
-                    const img = lightbox.querySelector('img');
                     if (img) {
                         const midPage = midpoint(pts[0], pts[1]);
                         startMid = toLocal(midPage, img);
@@ -299,15 +328,13 @@
                 }
             });
 
-            // Reset transform on lightbox close
+            // Mouse click handling (for non-touch devices)
             lightbox.addEventListener('click', e => {
                 if (e.target === lightbox) {
-                    scale = 1;
-                    translate = { x: 0, y: 0 };
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
                     const img = lightbox.querySelector('img');
-                    if (img) {
-                        applyTransform(img);
-                    }
+                    if (img) resetImageTransform(img);
                 }
             });
         });
