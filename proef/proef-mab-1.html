@@ -123,17 +123,23 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             cursor: pointer;
+            touch-action: none; /* Prevent browser handling of pinch gesture */
+            overflow: hidden;
         }
 
         .lightbox img {
             max-width: 90%;
             max-height: 90vh;
-            margin: auto;
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform-origin: 0 0;
             object-fit: contain;
+            will-change: transform;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
         .img-inline {
@@ -172,41 +178,136 @@
                 }
             });
 
-            // Add touch gestures for zooming
-            let currentScale = 1;
-            let initialDistance = 0;
+            // Enhanced touch gestures for zooming with proper focal point
+            let pointers = new Map();
+            let startScale = 1;
+            let scale = 1;
+            let translate = { x: 0, y: 0 };
+            let startTranslate = { x: 0, y: 0 };
+            let startMid = { x: 0, y: 0 };
+            let startDistance = 0;
+            let isPinching = false;
+            let startPanPoint = { x: 0, y: 0 };
+            const minScale = 1;
+            const maxScale = 4;
 
+            function getPoint(e) {
+                return { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
+            }
+
+            function distance(a, b) {
+                const dx = a.x - b.x, dy = a.y - b.y;
+                return Math.hypot(dx, dy);
+            }
+
+            function midpoint(a, b) {
+                return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+            }
+
+            function toLocal(point, img) {
+                const rect = img.getBoundingClientRect();
+                return { x: point.x - rect.left, y: point.y - rect.top };
+            }
+
+            function applyTransform(img) {
+                img.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+            }
+
+            // Touch event handlers
             lightbox.addEventListener('touchstart', e => {
-                if (e.touches.length === 2) {
-                    initialDistance = Math.hypot(
-                        e.touches[0].pageX - e.touches[1].pageX,
-                        e.touches[0].pageY - e.touches[1].pageY
-                    );
+                e.preventDefault();
+                const touches = Array.from(e.touches);
+                touches.forEach(touch => {
+                    pointers.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+                });
+
+                const img = lightbox.querySelector('img');
+                if (!img) return;
+
+                if (touches.length === 1) {
+                    // Start pan
+                    startPanPoint = getPoint(e);
+                    startTranslate = { ...translate };
+                } else if (touches.length === 2) {
+                    // Start pinch
+                    const points = Array.from(pointers.values());
+                    startDistance = distance(points[0], points[1]);
+                    startScale = scale;
+                    const midPage = midpoint(points[0], points[1]);
+                    startMid = toLocal(midPage, img);
+                    startTranslate = { ...translate };
+                    isPinching = true;
                 }
             });
 
             lightbox.addEventListener('touchmove', e => {
-                if (e.touches.length === 2) {
-                    e.preventDefault();
-                    const currentDistance = Math.hypot(
-                        e.touches[0].pageX - e.touches[1].pageX,
-                        e.touches[0].pageY - e.touches[1].pageY
-                    );
-                    
-                    const scale = currentDistance / initialDistance;
-                    const newScale = Math.min(Math.max(currentScale * scale, 1), 3);
-                    
-                    const img = lightbox.querySelector('img');
-                    if (img) {
-                        img.style.transform = `translate(-50%, -50%) scale(${newScale})`;
-                    }
+                e.preventDefault();
+                const touches = Array.from(e.touches);
+                touches.forEach(touch => {
+                    pointers.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+                });
+
+                const img = lightbox.querySelector('img');
+                if (!img) return;
+
+                if (touches.length === 1 && !isPinching) {
+                    // Pan
+                    const p = getPoint(e);
+                    const dx = p.x - startPanPoint.x;
+                    const dy = p.y - startPanPoint.y;
+                    translate.x = startTranslate.x + dx;
+                    translate.y = startTranslate.y + dy;
+                    applyTransform(img);
+                } else if (touches.length >= 2) {
+                    // Pinch
+                    const pts = Array.from(pointers.values());
+                    const curDist = distance(pts[0], pts[1]);
+                    if (startDistance === 0) return;
+
+                    let newScale = startScale * (curDist / startDistance);
+                    newScale = Math.min(Math.max(newScale, minScale), maxScale);
+
+                    // Keep pinch focal point stationary
+                    translate.x = startTranslate.x + startMid.x * (startScale - newScale);
+                    translate.y = startTranslate.y + startMid.y * (startScale - newScale);
+
+                    scale = newScale;
+                    applyTransform(img);
                 }
             });
 
-            lightbox.addEventListener('touchend', () => {
-                const img = lightbox.querySelector('img');
-                if (img) {
-                    currentScale = parseFloat(img.style.transform.match(/scale\((.*?)\)/)?.[1] || 1);
+            lightbox.addEventListener('touchend', e => {
+                Array.from(e.changedTouches).forEach(touch => {
+                    pointers.delete(touch.identifier);
+                });
+
+                if (pointers.size < 2) {
+                    isPinching = false;
+                    startScale = scale;
+                    startDistance = 0;
+                    startTranslate = { ...translate };
+                } else if (pointers.size >= 2) {
+                    const pts = Array.from(pointers.values());
+                    startDistance = distance(pts[0], pts[1]);
+                    startScale = scale;
+                    const img = lightbox.querySelector('img');
+                    if (img) {
+                        const midPage = midpoint(pts[0], pts[1]);
+                        startMid = toLocal(midPage, img);
+                    }
+                    startTranslate = { ...translate };
+                }
+            });
+
+            // Reset transform on lightbox close
+            lightbox.addEventListener('click', e => {
+                if (e.target === lightbox) {
+                    scale = 1;
+                    translate = { x: 0, y: 0 };
+                    const img = lightbox.querySelector('img');
+                    if (img) {
+                        applyTransform(img);
+                    }
                 }
             });
         });
