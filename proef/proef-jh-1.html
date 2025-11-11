@@ -151,6 +151,43 @@
         .img-inline:hover {
             opacity: 0.9;
         }
+
+        /* Half-width image with text beside it */
+        .img-text-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .img-text-row img {
+            width: 100%;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-text-row img:hover {
+            opacity: 0.9;
+        }
+
+        .img-text-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .img-text-content .body-type:last-child {
+            margin-bottom: 0;
+        }
+
+        /* On small screens, stack vertically */
+        @media (max-width: 768px) {
+            .img-text-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -367,13 +404,13 @@
                 Concept
             </h2>
             <p class="body-type">
-                For this book I initially considered to create a chronological structure for the book. I found it interesting how Jorie told me about the creation of the Tribunal, and how it really was an experiment for everybody involved. I wanted to emphasise this for the reader, to give them a similar experience in how they approach the book. As if the reader would (re)discover the Tribunal in a similar way.
+                For this book I initially considered to create a chronological structure for the book. I found it interesting how Jorie told me about the creation of the Tribunal, and how it really was an experiment for everybody involved. I wanted to emphasise this for the reader, to give them a similar experience in how they approach the book. As if the reader would (re)discover the Tribunal in a similar way.
             </p>
             <p class="body-type">
                 However, after looking at all the materials and reflecting on your proposed chronological structure (and your wish to not adhere to it strictly), I think it might work better to approach it a bit more loosely, and focus most on the subjects of the chapters and articles.
             </p>
             <p class="body-type">
-                I still think some kind of global chronology is very useful, but I think Jorie can benefit a lot from having the freedom to easily refer to different aspects of the history without having to worry too much about what part of the book the text is placed in.
+                I still think some kind of global chronology is very useful, but I think Jorie can benefit a lot from having the freedom to easily refer to different aspects of the history without having to worry too much about what part of the book the text is placed in.
             </p>
             <h2 class="header-type">
                 Structure
@@ -406,62 +443,98 @@
             <p class="body-type">
                 With image sections between some or even every substory. Not literally linking every image section to a specific substory, but more generally through the whole book. But I can still see it work to work with black-and-white thumbnails within the texts, for example, if at some point Jorie does refer to very specific images.
             </p>
+            <p class="body-type">
+                Each substory could be similar in length, structure and style, but I think it could work just as well if there is some variation as long as the writing style stays consistent. Maybe some articles have image thumbnails if they refer a lot to the evidence materials, for example, while other articles explain more about specific parts of the history, and have more footnotes/endnotes as extra background information for the reader. Some may also be shorter (if there is just so much to say about something), while other parts may be much longer (with interviews, for example). Depending on the final content, I'll reconsider how the structure of the book as a whole will function, and how that will impact the production choices as well.
+            </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/xxel5bglb0xhq7ccogjmq/JH_08.jpg?rlkey=yfsnerbh7cpn7f9gmo4yy6knv&dl=1" />
             <p class="body-type">
-                I also think that captions play an important role in a book like this. Not all images need a textual caption, I'm sure, but I think many will benefit from a short or sometimes longer factual note. I do think it could be nice to caption image numbers on all images, to really refer to this aspect of the story how everything is always documented. And the numbers can then be used with the thumbnails in the texts.
+                I also think that captions play an important role in a book like this. Not all images need a textual caption, I'm sure, but I think many will benefit from a short or sometimes longer factual note. I do think it could be nice to caption image numbers on all images, to really refer to this aspect of the story how everything is always documented and (cross-)referenced. And these numbers can then be used with the thumbnails in the texts.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/60v4ex461olypggzuy74q/JH_07.jpg?rlkey=2ma5osl6r4azropibyht0rdgg&dl=1" />
             <p class="body-type">
-                I imagine using two different kinds of paper: a white paper for images and their captions, a coloured stock for the texts in between. I now picked a warm yellow paper, kind of relating to the backgrounds you used for the object photographs. This could make the binding (structure of signatures) a bit more complex, but it also allows us to cut quite some costs as the coloured text pages could all be printed in black only.
+                I imagine using two different kinds of paper: a white paper for images and their captions, a coloured stock for the texts/articles in between. I now picked a warm yellow paper, kind of relating to the backgrounds you used for the object photographs. This could make the binding (structure of signatures) a bit more complex, but it also allows us to cut quite some costs as the coloured text pages could all be printed in black only.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/w6bv0ooe8ixbz8nbemjzu/JH_15.jpg?rlkey=36fp4xjiqiezplcrqjzwv9bh7&dl=1" />
             <h2 class="header-type">
                 Design
             </h2>
             <p class="body-type">
-                I opted to use the two types of images you have in two different ways: framed for the objects, full bleed for the landscapes, portraits, and other types of photographs for a more cinematic feel. These two types also work well together in combination on a spread.
+                I opted to use the two types of images you have in two different ways: framed for the objects to give them some distance and objectivity, full bleed for the landscapes, portraits, and other types of photographs for a more immersive feel. These two types also work well together in combination on a spread.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/bb3axeaj6a7kq8s6yta20/JH_17.jpg?rlkey=urz99s4c9km3kefuf9saiewku&dl=1" />
             <p class="body-type">
-                For the typography, I used a combination of a light and bold Univers by Linotype. It's a very classic business font that I think relates well to the bureaucratic nature of the subject, but well spaced and at a relatively large font size like this, it gives it a much more open and contemporary feel. I also imagine using some tricks like increasing the font size a bit on each first page of an article. And I played around with adding some graphic elements on the text pages that refer a bit to artifacts from scanned documents.
+                For the typography, I used a combination of a light and bold Univers by Linotype. It's a very classic business font that I think relates well to the bureaucratic nature of the subject. But well spaced and at a relatively large font size like this, it gives it a much more open and contemporary feel. I also imagine using some tricks like increasing the font size a bit on each first page of an article. And I played around with adding some graphic elements on the text pages that refer a bit to artifacts from scanned documents. All kinds of details that make the page feel more dynamic graphically.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/aqk6qs3lc710g5dt20x4o/JH_18.jpg?rlkey=f7rdaew8p32p12dpnzp28shkp&dl=1" />
             <p class="body-type">
-                For the captions, I let them overlap slightly with all the images. It's a graphic choice that immediately gives a recognisable look for the book, while it also emphasises that every image is documented and annotated in a way. Placement is still a tad rough, this is something I’ll refine for readability, of course. For now it’s just to give an idea for the feeling of the design. There’s still elements like page numbers missing too, for example.
+                For the captions, I let them overlap slightly with all the images. It's a graphic choice that immediately gives a recognisable look for the book, while it also emphasises that every image is documented and annotated. Placement is still a tad rough, this is something I’ll refine for readability, of course. For now it’s just to give an idea for the feeling of the design. There’s still page numbers missing too, for example. If you like the general direction of the design, I will continue work on this, and elaborate it further and in more detail.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/inqhy81y5x0exon16ywhz/JH_16.jpg?rlkey=nhtcump97jft1tnp4par5qxjn&dl=1" />
             <p class="body-type">
                 In the PDF I sketched a couple of different kinds of spreads, in which you can see how I see this work graphically: with small or large images, in combination with shorter or longer (or no) captions, and so forth.
             </p>
             <p class="body-type">
-                The current size of the book is 17×23 cm.
+                The current size of the book is 17×23 cm, which is a very economic size for printing. And a nice size to hold as a reader as well.
             </p>
             <h2 class="header-type">
                 Cover
             </h2>
             <p class="body-type">
-                For the cover I tried a number of different things, but here I show you three of the directions that worked well so far for me.
+                For the cover I tried a number of different things, but here I show you three of the directions that I liked best so far. I also opted to add a subtitle. I quickly came up with "Documents from the International Criminal Tribunal for the Former Yugoslavia". I think it's important to add something like this so it becomes immediately clear for everyone what the book is about, especially those who are not aware of the meaning of "Resolution 808". The exact wording and nature of the subtitle can surely be improved, though. But I wanted to show you my thought process.
             </p>
             <p class="body-type">
-                All three directions use the same kind of yellow paper as used in the rest of the book for the texts (but thicker). And all emphasise a specific aspect of the story. The first one on the story of the painted helmets (on the front and back cover). The other two more on a visualisation of the endless documentation, and for the last one also on the actual resolution document itself.
+                All three directions use the same kind of yellow paper as used in the rest of the book for the texts (but thicker). And all emphasise a specific aspect of the story. I also opted to add some kind of text for the back of the book. I quickly used (part) of your introduction. It gives a good impression of what I envision, but again, the text itself still needs to be adjusted.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/pt03wpcjnldrslua8uh7q/7.jpg?rlkey=58924jsv06ji3qbe0czbulgou&dl=1" />
             <p class="body-type">
-                All three directions use the same kind of yellow paper as used in the rest of the book for the texts (but thicker). And all emphasise a specific aspect of the story. The first one on the story of the painted helmets (on the front and back cover). The other two more on a visualisation of the endless documentation, and for the last one also on the actual resolution document itself.
+                The first one on the story of the painted helmets (on the front and back cover).
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/3p8ogxjvnrypnmsjfzlfv/8.jpg?rlkey=1ndpxfeiqopztc7j46xgm7tbn&dl=1" />
             <p class="body-type">
-                For the first two directions I also opted to add a subtitle. I quickly came up with "Documents from the International Criminal Tribunal for the Former Yugoslavia". I think it's important to add something like this so it becomes immediately clear for everyone what the book is about, especially those who are not aware of the meaning of "Resolution 808". The exact wording and nature of the subtitle can surely be improved, though. But I wanted to show you my thought process.
+                The second one focus more on a visualisation of all the evidence.
             </p>
             <img class="img-inline" src="https://www.dropbox.com/scl/fi/2jr27taropvy44dhxbprq/9.jpg?rlkey=7wtk39p0aktunql9k5wfqvsqt&dl=1" />
             <p class="body-type">
-                I also opted to add some kind of text for the back of the book. I quickly used (part) of your introduction. It gives a good impression of what I envision, but again, the text itself still needs to be adjusted.
+                The last one focuses on the actual resolution document itself.
             </p>
             <h2 class="header-type">
                 Next steps
             </h2>
             <p class="body-type">
-                It will be much easier for me to continue working on the concept when I have some more concrete textual content to work with. All the articles from one or two chapters, for example. Because then I know more about the (average) length of these articles, whether there are footnotes/endnotes, if there are image thumbnails to be added (and how many). Then I can much better predict how that will affect the structure of the book as a whole, and how the image sections relate to these. But these initial sketches give you an idea of how I envision the book to work.
+                It will be much easier for me to continue working on the concept when I have some more concrete textual content to work with. All the articles from one or two chapters, for example. Because then I know more about the (average) length of these articles, whether there are footnotes/endnotes, if there are image thumbnails to be added (and how many). Then I can much better predict how that will affect the structure of the book as a whole, and how the image sections relate to these. Then it will also be possible to focus more on the image sequences. But these initial sketches give you an idea of how I envision the book to work.
+            </p>
+            <h2 class="header-type">
+                Notes
+            </h2>
+            <p class="body-type">
+                As mentioned before, as a designer it's always very helpful to have different levels of typographic elements. Things like footnotes, references, image thumbnails, and so forth, are great things to work with graphically. Since a lot of the texts by Jorie still need to be written/edited, here are some examples from previous books I've worked on, to give you some inspiration. No need to apply all such elements, but just to give an idea how things could work.
+            </p>
+            <div class="img-text-row">
+                <img class="img-inline" src="https://www.dropbox.com/scl/fi/2vaissufqwjrrwr1g90zi/Screenshot-2025-11-11-094517.jpg?rlkey=gebbixv3gxcl7qdq7ymzwcidi&dl=1" />
+                <div class="img-text-content">
+                    <p class="body-type">
+                        In Passion Play, we used small insets with footnotes aligned to the bottom margin. They would appear on pages with references only. There are also images with captions. Sometimes I would print these in black only, but in this case we opted to keep them full colour, as they don't appear anywhere else in the book.
+                    </p>
+                </div>
+            </div>
+            <div class="img-text-row">
+                <img class="img-inline" src="https://www.dropbox.com/scl/fi/bhs57waku3217u8mxsiir/Screenshot-2025-11-11-110108.jpg?rlkey=sp8p2ae6mtlr0ygscaa9q8rlu&dl=1" />
+                <div class="img-text-content">
+                    <p class="body-type">
+                        In With Love. From an Invader. we used inline references with a list of endnotes at the end of each chapter/essay. By using different typography for these references you make them stand out visually from the rest of the text. But we also used footnote numbers for clarifications and extra layers of information.
+                    </p>
+                </div>
+            </div>
+            <div class="img-text-row">
+                <img class="img-inline" src="https://www.dropbox.com/scl/fi/v59pmeoa20i2ugrk6bbrd/Screenshot-2025-11-11-110335.jpg?rlkey=j2zmldtfwcpcb8rcgbzc4zbc0&dl=1" />
+                <div class="img-text-content">
+                    <p class="body-type">
+                        In Klara and the Bomb, we used keywords in the margins of the page for easier browsing of the text.
+                    </p>
+                </div>
+            </div>
+            <p class="body-type">
+                But I could also see thumbnail image references work with this book, as shown in one of the example spreads above. For example in combination with inline references and endnotes, or footnotes. It all depends a bit on the content. Jorie and I also talked about insets with background information like they have at The Correspondent. I could also see that work, as it may often be interesting for the reader to have some more knowledge about specific subjects if necessary. Anything is possible.
             </p>
         </section>
     </main>
